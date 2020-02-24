@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>爱奇艺省份实时点击量分析</title>
+    <!-- 引入 ECharts 文件 -->
+   <!-- <script src="js/echarts.min.js"></script>
+    &lt;!&ndash; 引入 jQuery 文件 &ndash;&gt;-->
+    <script src="js/china.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/echarts.min.js"></script>
+</head>
+<body>
+
+<div id="container" style="height: 100%"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    var option = {
+        title : {
+            text: '省份点击量',
+            subtext: '测试数据',
+            left: 'center'
+        },
+        tooltip : {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data:['iphone']
+        },
+        visualMap: {
+            min: 0,
+            max: 2500,
+            left:'left',
+            top:'bottom',
+            text:['高','低'],           // 文本，默认为数值文本
+            calculable : true
+        },
+        toolbox: {
+            show: true,
+            orient :'vertical',
+            left:'right',
+            top:'center',
+            feature :{
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        series : [
+            {
+                name: 'Provence',
+                type: 'map',
+                mapType: 'china',
+                roam: false,
+                label: {
+                    normal: {
+                        show: false
+                    },
+                    emphasis: {
+                        show: true
+                    }
+                },
+                data:(function(){
+                    var datas = [];
+                    $.ajax({
+                        type:"POST",
+                        url:"/province",
+                        dataType:'json',
+                        async: false,
+                        success: function(result){
+                            for(var i=0; i<result.length; i++) {
+                                datas.push({"value":result[i].value, "name":result[i].name})
+                            }
+                        }
+                    })
+                    return datas;
+                })(),
+            }
+        ]
+    };;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+    </script>
+</body>
+</html>
